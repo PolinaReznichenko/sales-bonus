@@ -5,7 +5,7 @@
  * @returns {number}
  */
 function calculateSimpleRevenue(purchase, _product) {
-   // @TODO: Расчет выручки от операции
+   // @TODO: Расчет выручки от операции (данные о продаже конкретного товара)
    const discount = 1 - (purchase.discount / 100);
    const sale_price = purchase.sale_price;
    const quantity = purchase.quantity;
@@ -33,7 +33,7 @@ function calculateBonusByProfit(index, total, seller) {
     } else { // Для всех остальных
         bonusPerc = 0.05;
     }
-    return  profit * bonusPerc;
+    return profit * bonusPerc;
 }
 
 
@@ -106,9 +106,11 @@ function analyzeSalesData(data, options) {
         // Увеличить количество продаж
         seller.sales_count++;
         // Увеличить общую сумму выручки всех продаж
-        seller.revenue = record.total_amount - record.total_discount;
+        seller.revenue += record.total_amount - record.total_discount;
+        // console.log(seller.revenue)
 
         // Расчёт прибыли для каждого товара
+
         record.items.forEach(item => {
             const product = productIndex[item.sku]; // Товар
             // console.log(product)
@@ -126,7 +128,7 @@ function analyzeSalesData(data, options) {
             // console.log(profit)
 
             // Увеличить общую накопленную прибыль (profit) у продавца
-            seller.profit = profit;
+            seller.profit += profit;
 
             // Учёт количества проданных товаров
             if (!seller.products_sold[item.sku]) {
@@ -149,7 +151,6 @@ function analyzeSalesData(data, options) {
         }
         return 0;
     });
-
     // console.log(sellerSort) //Потом убрать res
 
 
@@ -159,7 +160,8 @@ function analyzeSalesData(data, options) {
         seller.bonus = calculateBonus(index, sellerStats.length, seller);// Считаем бонус
         
         
-        seller.top_products = Object.entries(seller.products_sold);// Формируем топ-10 товаров
+        seller.top_products = seller.products_sold; // Формируем топ-10 товаров
+        seller.top_products = Object.entries(seller.products_sold);
         seller.top_products = seller.top_products.map(([sku, quantity]) => ({sku, quantity}));
         seller.top_products.sort((a, b) => {
         if (a.quantity > b.quantity) {
