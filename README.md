@@ -1,3 +1,5 @@
+## Ссылка github: https://github.com/PolinaReznichenko/sales-bonus
+
 # Проектная работа "Пряники"
 5 спринт, модуль JS
 
